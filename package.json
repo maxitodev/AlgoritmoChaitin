@@ -1,0 +1,18 @@
+{
+  "name": "chaitin-slides",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Presentacion interactiva sobre el algoritmo de Chaitin (asignacion de registros por coloreo de grafos)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.19",
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
