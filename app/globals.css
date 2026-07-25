@@ -437,7 +437,80 @@ pre,
   border: 1px solid var(--line);
 }
 
-@media (max-width: 720px) {
-  .grid-2 { grid-template-columns: 1fr; }
-  .hint { display: none; }
+/* ---------- Responsive / móvil ---------- */
+@media (max-width: 860px) {
+  .grid-2,
+  .grid-2.top {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hint {
+    display: none;
+  }
+  /* Cada diapositiva puede desplazarse verticalmente en pantallas pequeñas */
+  .slide {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 58px 16px 96px;
+  }
+  .slide-inner {
+    max-width: 100%;
+  }
+  .accent-bar {
+    margin-bottom: 16px;
+  }
+  .lead {
+    max-width: 100%;
+  }
+  .footer {
+    padding: 0 16px;
+    font-size: 11px;
+    height: 40px;
+  }
+  .footer .brand {
+    display: none;
+  }
+  .menu-toggle {
+    top: 10px;
+    right: 10px;
+  }
+  .menu-toggle .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .controls {
+    bottom: 10px;
+    gap: 8px;
+  }
+  .controls .nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+  /* La tabla comparativa se desplaza horizontalmente */
+  .table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+  .overview {
+    padding: 20px 16px 40px;
+  }
+  .ov-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slide {
+    padding: 54px 13px 96px;
+  }
+  .bullets li {
+    padding-left: 26px;
+  }
+  .ov-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }

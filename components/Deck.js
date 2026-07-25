@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SLIDES } from "./Slides";
 
 export default function Deck() {
   const [i, setI] = useState(0);
   const [dir, setDir] = useState(1);
-  const [notes, setNotes] = useState(false);
   const [overview, setOverview] = useState(false);
 
   const total = SLIDES.length;
@@ -48,10 +47,6 @@ export default function Deck() {
         case "End":
           goto(total - 1);
           break;
-        case "n":
-        case "N":
-          setNotes((v) => !v);
-          break;
         case "o":
         case "O":
           setOverview((v) => !v);
@@ -59,9 +54,6 @@ export default function Deck() {
         case "f":
         case "F":
           toggleFullscreen();
-          break;
-        case "Escape":
-          setNotes(false);
           break;
         default:
           break;
@@ -78,6 +70,25 @@ export default function Deck() {
     } else {
       document.exitFullscreen?.();
     }
+  };
+
+  // --- Navegación por gestos (móvil) ---
+  const touch = useRef({ x: null, block: false });
+  const onTouchStart = (e) => {
+    const t = e.changedTouches[0];
+    const blocked = !!e.target.closest?.(".gcd, .table-wrap, .overview");
+    touch.current = { x: t.clientX, y: t.clientY, block: blocked };
+  };
+  const onTouchEnd = (e) => {
+    const start = touch.current;
+    if (start.x == null || start.block) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      dx < 0 ? next() : prev();
+    }
+    touch.current = { x: null, block: false };
   };
 
   const variants = {
@@ -109,7 +120,7 @@ export default function Deck() {
         </button>
       </div>
 
-      <div className="stage">
+      <div className="stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <AnimatePresence custom={dir} initial={false}>
           <motion.div
             key={slide.key}
@@ -128,8 +139,8 @@ export default function Deck() {
 
       <div className="hint">
         <span className="kbd">←</span> <span className="kbd">→</span> navegar ·{" "}
-        <span className="kbd">N</span> notas · <span className="kbd">O</span> índice ·{" "}
-        <span className="kbd">F</span> pantalla completa
+        <span className="kbd">O</span> índice · <span className="kbd">F</span> pantalla
+        completa
       </div>
 
       <div className="footer">
@@ -154,37 +165,7 @@ export default function Deck() {
         >
           ›
         </button>
-        <button
-          className={`icon-btn ${notes ? "active" : ""}`}
-          onClick={() => setNotes((v) => !v)}
-          title="Guion / notas (N)"
-          aria-label="Notas"
-        >
-          🎙
-        </button>
       </div>
-
-      <AnimatePresence>
-        {notes && (
-          <motion.div
-            className="notes"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <div className="notes-head">
-              <span>🎙 Guion para el video</span>
-              <span style={{ color: "#9fc4bc" }}>· {slide.time}</span>
-            </div>
-            <div className="script">{slide.notes}</div>
-            <div className="timing">
-              Diapositiva {i + 1} de {total} · Pulsa <span className="kbd">N</span> para
-              ocultar
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <AnimatePresence>
         {overview && (
