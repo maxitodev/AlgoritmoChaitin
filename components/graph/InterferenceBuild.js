@@ -1,6 +1,6 @@
 "use client";
 
-// Ilustración: código de 3 direcciones → rangos de vida → grafo de interferencia.
+// Ilustración animada: código de 3 direcciones → rangos de vida → grafo de interferencia.
 
 const CODE = [
   { n: 1, t: "a = leer()" },
@@ -40,6 +40,7 @@ const NODE_COLOR = {
 };
 
 const ROW_H = 30;
+const NODE_ORDER = ["a", "b", "c", "d"];
 
 export default function InterferenceBuild() {
   return (
@@ -48,6 +49,7 @@ export default function InterferenceBuild() {
       <div className="ib-left card">
         <div className="ib-title">Código + rangos de vida</div>
         <div className="ib-code">
+          <div className="ib-scan" />
           <div className="ib-lines">
             {CODE.map((l) => (
               <div className="ib-line" key={l.n} style={{ height: ROW_H }}>
@@ -66,6 +68,7 @@ export default function InterferenceBuild() {
                   top: `${(r.from - 1) * ROW_H + 4}px`,
                   height: `${(r.to - r.from + 1) * ROW_H - 8}px`,
                   background: r.color,
+                  animationDelay: `${idx * 0.15}s`,
                 }}
               >
                 {r.id}
@@ -85,31 +88,48 @@ export default function InterferenceBuild() {
           {EDGES.map(([a, b], i) => (
             <line
               key={i}
+              className="ib-edge"
               x1={NODES[a].x}
               y1={NODES[a].y}
               x2={NODES[b].x}
               y2={NODES[b].y}
               stroke="#9db4bb"
               strokeWidth="2.4"
+              style={{ animationDelay: `${0.7 + i * 0.14}s` }}
             />
           ))}
-          {Object.entries(NODES).map(([id, p]) => (
-            <g key={id}>
-              <circle cx={p.x} cy={p.y} r="25" fill="#fff" stroke={NODE_COLOR[id]} strokeWidth="3.5" />
-              <text
-                x={p.x}
-                y={p.y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontFamily="var(--font-mono)"
-                fontSize="18"
-                fontWeight="700"
-                fill={NODE_COLOR[id]}
-              >
-                {id}
-              </text>
-            </g>
-          ))}
+          {NODE_ORDER.map((id, idx) => {
+            const p = NODES[id];
+            return (
+              <g key={id}>
+                <circle
+                  className="ib-pulse"
+                  cx={p.x}
+                  cy={p.y}
+                  r="30"
+                  fill="none"
+                  stroke={NODE_COLOR[id]}
+                  strokeWidth="2"
+                  style={{ animationDelay: `${idx * 0.5}s`, color: NODE_COLOR[id] }}
+                />
+                <g className="ib-node" style={{ animationDelay: `${idx * 0.15}s` }}>
+                  <circle cx={p.x} cy={p.y} r="25" fill="#fff" stroke={NODE_COLOR[id]} strokeWidth="3.5" />
+                  <text
+                    x={p.x}
+                    y={p.y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontFamily="var(--font-mono)"
+                    fontSize="18"
+                    fontWeight="700"
+                    fill={NODE_COLOR[id]}
+                  >
+                    {id}
+                  </text>
+                </g>
+              </g>
+            );
+          })}
         </svg>
         <div className="ib-hint">Arista = interfieren = no pueden compartir registro.</div>
       </div>
@@ -130,9 +150,35 @@ export default function InterferenceBuild() {
         .ib-code {
           position: relative;
           display: flex;
+          overflow: hidden;
+        }
+        .ib-scan {
+          position: absolute;
+          left: -8px;
+          right: -8px;
+          height: 30px;
+          top: 0;
+          background: linear-gradient(
+            180deg,
+            transparent,
+            rgba(18, 152, 138, 0.12),
+            transparent
+          );
+          border-radius: 6px;
+          pointer-events: none;
+          animation: ibScan 3.6s ease-in-out infinite;
+          z-index: 0;
+        }
+        @keyframes ibScan {
+          0% { transform: translateY(0); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(150px); opacity: 0; }
         }
         .ib-lines {
           flex: 1;
+          position: relative;
+          z-index: 1;
         }
         .ib-line {
           display: flex;
@@ -154,6 +200,7 @@ export default function InterferenceBuild() {
           position: relative;
           width: 118px;
           margin-left: 8px;
+          z-index: 1;
         }
         .ib-bar {
           position: absolute;
@@ -166,10 +213,10 @@ export default function InterferenceBuild() {
           text-align: center;
           padding-top: 3px;
           box-shadow: var(--shadow-sm);
-          animation: grow 0.5s ease;
+          animation: ibGrow 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
           transform-origin: top;
         }
-        @keyframes grow {
+        @keyframes ibGrow {
           from { transform: scaleY(0); opacity: 0; }
           to { transform: scaleY(1); opacity: 1; }
         }
@@ -182,6 +229,11 @@ export default function InterferenceBuild() {
           font-size: 30px;
           color: var(--teal);
           font-weight: 700;
+          animation: ibArrow 1.8s ease-in-out infinite;
+        }
+        @keyframes ibArrow {
+          0%, 100% { transform: translateX(0); opacity: 0.6; }
+          50% { transform: translateX(5px); opacity: 1; }
         }
         .ib-svg {
           width: 100%;
@@ -189,6 +241,38 @@ export default function InterferenceBuild() {
           height: auto;
           display: block;
           margin: 0 auto;
+        }
+        .ib-edge {
+          stroke-dasharray: 320;
+          stroke-dashoffset: 320;
+          animation: ibDraw 0.6s ease forwards;
+        }
+        @keyframes ibDraw {
+          to { stroke-dashoffset: 0; }
+        }
+        .ib-node {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: ibPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes ibPop {
+          from { transform: scale(0); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .ib-pulse {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: ibPulse 3s ease-in-out infinite;
+          opacity: 0;
+        }
+        @keyframes ibPulse {
+          0%, 100% { transform: scale(0.85); opacity: 0; }
+          50% { transform: scale(1.15); opacity: 0.45; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ib-scan, .ib-arrow, .ib-pulse { animation: none; opacity: 0; }
+          .ib-edge { animation: none; stroke-dashoffset: 0; }
+          .ib-node, .ib-bar { animation: none; opacity: 1; transform: none; }
         }
         @media (max-width: 820px) {
           .ib { grid-template-columns: 1fr; }

@@ -99,6 +99,11 @@ export default function Deck() {
 
   return (
     <div className="deck">
+      <div className="deck-ambient" aria-hidden="true">
+        <span className="amb a1" />
+        <span className="amb a2" />
+        <span className="amb a3" />
+      </div>
       <div className="progress" style={{ width: `${((i + 1) / total) * 100}%` }} />
 
       <div className="menu-toggle">

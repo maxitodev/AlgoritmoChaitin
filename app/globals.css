@@ -95,8 +95,62 @@ pre,
 
 .stage {
   position: relative;
+  z-index: 1;
   flex: 1;
   overflow: hidden;
+}
+
+/* Capa ambiental animada detrás de todas las diapositivas */
+.deck-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.deck-ambient .amb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+.deck-ambient .a1 {
+  width: 460px;
+  height: 460px;
+  top: -150px;
+  left: -110px;
+  background: radial-gradient(circle, var(--teal-bright), transparent 68%);
+  opacity: 0.14;
+  animation: ambDrift1 24s ease-in-out infinite;
+}
+.deck-ambient .a2 {
+  width: 540px;
+  height: 540px;
+  right: -170px;
+  bottom: -190px;
+  background: radial-gradient(circle, var(--orange), transparent 66%);
+  opacity: 0.12;
+  animation: ambDrift2 30s ease-in-out infinite;
+}
+.deck-ambient .a3 {
+  width: 360px;
+  height: 360px;
+  left: 45%;
+  top: 30%;
+  background: radial-gradient(circle, var(--r3), transparent 70%);
+  opacity: 0.08;
+  animation: ambDrift3 34s ease-in-out infinite;
+}
+@keyframes ambDrift1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(60px, 44px); }
+}
+@keyframes ambDrift2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-54px, -32px); }
+}
+@keyframes ambDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -40px) scale(1.12); }
 }
 
 .slide {
@@ -512,5 +566,73 @@ pre,
   }
   .ov-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------- Animaciones de entrada (mantener la atención) ---------- */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes softPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(18, 152, 138, 0); }
+  50% { box-shadow: 0 0 0 5px rgba(18, 152, 138, 0.14); }
+}
+
+/* Cada bloque de la diapositiva aparece con un desfase (stagger) */
+.slide-inner:not(.cover) > *,
+.cover-content > * {
+  animation: riseIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.slide-inner:not(.cover) > *:nth-child(1),
+.cover-content > *:nth-child(1) { animation-delay: 0.02s; }
+.slide-inner:not(.cover) > *:nth-child(2),
+.cover-content > *:nth-child(2) { animation-delay: 0.09s; }
+.slide-inner:not(.cover) > *:nth-child(3),
+.cover-content > *:nth-child(3) { animation-delay: 0.16s; }
+.slide-inner:not(.cover) > *:nth-child(4),
+.cover-content > *:nth-child(4) { animation-delay: 0.23s; }
+.slide-inner:not(.cover) > *:nth-child(5),
+.cover-content > *:nth-child(5) { animation-delay: 0.30s; }
+.slide-inner:not(.cover) > *:nth-child(6),
+.cover-content > *:nth-child(6) { animation-delay: 0.37s; }
+.slide-inner:not(.cover) > *:nth-child(7),
+.cover-content > *:nth-child(7) { animation-delay: 0.44s; }
+
+/* Viñetas y filas de tabla con su propio stagger */
+.bullets li { animation: riseIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.bullets li:nth-child(1) { animation-delay: 0.26s; }
+.bullets li:nth-child(2) { animation-delay: 0.37s; }
+.bullets li:nth-child(3) { animation-delay: 0.48s; }
+.bullets li:nth-child(4) { animation-delay: 0.59s; }
+.bullets li:nth-child(5) { animation-delay: 0.70s; }
+
+.cmp tbody tr { animation: riseIn 0.5s ease both; }
+.cmp tbody tr:nth-child(1) { animation-delay: 0.22s; }
+.cmp tbody tr:nth-child(2) { animation-delay: 0.34s; }
+.cmp tbody tr:nth-child(3) { animation-delay: 0.46s; }
+.cmp tbody tr:nth-child(4) { animation-delay: 0.58s; }
+
+/* Pulsos ambientales sutiles */
+.pipeline span.on { animation: softPulse 2.2s ease-in-out infinite; }
+.chip { animation: glowPulse 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-inner:not(.cover) > *,
+  .cover-content > *,
+  .bullets li,
+  .cmp tbody tr {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .pipeline span.on,
+  .chip,
+  .deck-ambient .amb {
+    animation: none !important;
   }
 }
