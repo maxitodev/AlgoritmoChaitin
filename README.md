@@ -17,24 +17,27 @@ Abre <http://localhost:3000> en el navegador.
 | Tecla | Acción |
 |-------|--------|
 | `←` `→` / `Espacio` | Anterior / Siguiente diapositiva |
-| `N` | Mostrar/ocultar el **guion** (narración para el video) |
 | `O` | Índice de diapositivas |
 | `F` | Pantalla completa (ideal para grabar) |
 | `Home` / `End` | Primera / última |
 
+En **móvil** puedes deslizar (swipe) para cambiar de diapositiva o usar los
+botones `‹ ›` de abajo. La web es totalmente responsiva.
+
 En los ejemplos interactivos (diapositivas 9 y 10) usa los botones
 **▶ / ‹ / ›** para reproducir o avanzar el algoritmo paso a paso.
 
+## 🎙️ El guion
+
+El guion para narrar el video está en **`Guion-Video-Chaitin.pdf`** (voz en off:
+Max). Trae la narración de las 14 diapositivas con su minutaje
+(total ≈ 6.5 min, dentro del rango pedido de 5–7 min).
+
 ## ⚠️ Antes de grabar
 
-1. **Pon los nombres del equipo**: edita `TEAM` al inicio de
-   `components/Slides.js`:
-   ```js
-   export const TEAM = ["Tu Nombre", "Nombre de tu compañero/a"];
-   ```
-2. Pulsa `F` para pantalla completa y `N` cuando quieras leer el guion.
-3. Cada diapositiva trae abajo su guion con el minutaje sugerido
-   (total ≈ 6–7 min, dentro del rango pedido de 5–7 min).
+1. Los nombres del equipo ya están puestos. Para cambiarlos, edita `TEAM` al
+   inicio de `components/Slides.js`.
+2. Pulsa `F` para pantalla completa y graba mientras lees el PDF del guion.
 
 ## Contenido (14 diapositivas)
 
